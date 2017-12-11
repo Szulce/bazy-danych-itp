@@ -1,0 +1,265 @@
+#include<iostream>
+#include<cmath>
+#include<vector>
+#include<ctime>
+#include<cstdlib>
+using namespace std;
+class Figura
+{
+public:
+    virtual double Pole()=0;
+    virtual double Obwod()=0;
+};
+
+class Kwadrat:public Figura
+{
+private:
+    double a;
+public:
+    double GetA()
+    {
+        return a;
+    }
+    void SetA(double A)
+    {
+        this->a=A;
+    }
+    Kwadrat() {}
+    Kwadrat(double A)
+    {
+        this->a=A;
+    }
+    virtual double Pole()
+    {
+        return a*a;
+    }
+    virtual double Obwod()
+    {
+        return 4*a;
+    }
+};
+class Trojkat:public Figura
+{
+protected:
+    double a;
+    double b;
+    double c;
+    double h;
+
+public:
+    Trojkat(double A,double B,double C)
+    {
+        this->h=0;
+        this->a=A;
+        this->b=B;
+        this->c=C;
+    }
+    Trojkat()
+    {
+        this->h=0;
+
+    }
+    double GetA()
+    {
+        return a;
+    }
+    double GetB()
+    {
+        return b;
+    }
+    double GetC()
+    {
+        return c;
+    }
+    double GetH()
+    {
+        return h;
+    }
+    void SetA(double A)
+    {
+        this->a=A;
+    }
+    void SetB(double B)
+    {
+        this->b=B;
+    }
+    void SetC(double C)
+    {
+        this->c=C;
+    }
+    void SetH(double H)
+    {
+        this->h=H;
+    }
+    virtual double Pole()
+    {
+        if(h==0)
+        {
+            double p=0.5*(a+b+c);
+            return sqrt(p*(p-a)*(p-b)*(p-c));
+        }
+        else return (a*h)/2;
+    }
+    virtual double Obwod()
+    {
+        return a+b+c;
+    }
+
+
+};
+class Prostokat:public Figura
+{
+protected:
+    double a;
+    double b;
+public:
+    double GetA()
+    {
+        return a;
+    }
+    double GetB()
+    {
+        return b;
+    }
+    void SetA(double A)
+    {
+        this->a=A;
+    }
+    void SetB(double B)
+    {
+        this->b=B;
+    }
+    virtual double Pole()
+    {
+        return a*b;
+    }
+    virtual double Obwod()
+    {
+        return 2*a+2*b;
+    }
+} ;
+
+
+class TRownoboczny:public Trojkat
+{
+public:
+    TRownoboczny() {};
+    TRownoboczny(double A):Trojkat(a,b,c) {};
+
+    virtual double Pole()
+    {
+        return (pow(GetA(),2)*sqrt(3))/4;
+    }
+    virtual double Obwod()
+    {
+        return GetA()*3;
+    }
+
+};
+
+class TRownProstokatny:public TRownoboczny
+{
+public:
+    virtual double Pole()
+    {
+        return (GetA()*GetH())/2;
+    }
+
+
+};
+class TRownoramienny:public Trojkat
+{
+public:
+    TRownoramienny() {};
+    TRownoramienny(double A,double B)
+    {
+        SetA(A);
+        SetB(A);
+        SetC(B);
+        SetH(sqrt(B*B-(A*A)/4));
+    };
+
+
+    virtual double Obwod()
+    {
+        return 2*GetA()+GetB();
+    }
+
+};
+
+class Obszar
+{
+public:
+    vector<Figura*> OBSZARY;
+    double PoleOb()
+    {
+        double POLE=0;
+
+        for(int i=0; i<OBSZARY.size(); i++)
+        {
+            POLE+=OBSZARY[i]->Pole();
+
+        }
+        return POLE;
+    }
+    double ObwObszaru()
+    {
+
+        double OBWOD=0;
+        for(int i=0; i<OBSZARY.size(); i++)
+        {
+
+            OBWOD+=OBSZARY[i]->Obwod();
+        }
+
+        return OBWOD;
+
+    }
+};
+int main()
+{
+
+
+    Obszar O;
+    int t,k,p,a,b,c,h;
+    t=rand()%10+1;
+    k=rand()%30+1;
+    p=rand()%35;
+
+    for(int i=0; i<t; i++)
+    {
+        Trojkat t;
+        a=rand()%10+1;
+        b=rand()%20+1;
+        c=10;
+        h=a+b+c;
+        t.SetA(a);
+        t.SetB(b);
+        t.SetC(c);
+        t.SetH(h);
+        O.OBSZARY.push_back(&t);
+    }
+    for(int i=0; i<t; i++)
+    {
+        Prostokat p;
+        a=rand()%15+1;
+        b=rand()%21+1;
+
+        p.SetA(a);
+        p.SetB(b);
+
+        O.OBSZARY.push_back(&p);
+    }
+
+    for(int i=0; i<t; i++)
+    {
+        Kwadrat k;
+        a=rand()%18+9;
+        k.SetA(a);
+        O.OBSZARY.push_back(&k);
+    }
+
+
+    cout<<O.PoleOb()<<"  "<<O.ObwObszaru()<<endl;
+    return 0;
+}
