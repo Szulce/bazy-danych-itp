@@ -1,0 +1,202 @@
+#include<iostream>
+using namespace std;
+class Samochod {
+
+public:
+         string OPony;
+        string Silnik;
+        string Naped;
+        string Szyberdach;
+       string Automatyzacjaokien;
+        string Radio;
+public:
+         void setOpony(string m){
+              OPony = m ;
+              }
+
+         void setSilnik(string p){
+              Silnik = p;
+              }
+
+         void setNaped(string g){
+              Naped = g;
+              }
+
+         void setSzyberdach(string r){
+              Szyberdach = r;
+              }
+
+         void setRadio(string h){
+              Radio = h;
+              }
+
+		 void show(){
+              if(OPony!="") cout<< "Opony = " << OPony << endl;
+              if(Silnik!="") cout << "Silnik = " << Silnik << endl;
+              if(Naped!="") cout << "Naped = " << Naped << endl;
+              if(Szyberdach!="") cout << "Szyberdach = " << Szyberdach << endl;
+              if(Radio!="") cout << "Radio = " << Radio << endl;
+              }
+};
+
+class Builder {
+protected:
+	Samochod* samochod;
+
+public:
+	void newZestaw(){
+		samochod = new Samochod();
+	}
+
+	Samochod* getSamochod(){
+		return samochod;
+	}
+
+	virtual void buildOPony()=0;
+    virtual void buildRadio()=0;
+    virtual void buildSilnik()=0;
+    virtual void buildNaped()=0;
+    virtual void buildSzyberdach()=0;
+};
+
+class AUDI:public Builder {
+public :
+
+	AUDI():Builder(){
+	}
+
+	void buildOPony(){
+        samochod->setOpony("opony audi");
+    }
+
+    void buildSilnik(){
+        samochod->setSilnik("silnik audi");
+    }
+
+    void buildRadio(){
+        samochod->setRadio("radio audi");
+	}
+
+    void buildNaped(){
+        samochod->setNaped("naped audi");
+	}
+
+	void buildSzyberdach(){
+
+             samochod->setSzyberdach("szyberdach audi");
+
+}
+};
+
+class BMW:public Builder {
+public :
+
+	BMW():Builder(){
+	}
+
+	void buildOPony(){
+        samochod->setOpony("opony BMW");
+    }
+
+    void buildSilnik(){
+        samochod->setSilnik("silnik BMW");
+    }
+
+    void buildRadio(){
+        samochod->setRadio("radio BMW");
+	}
+    void buildNaped(){
+        samochod->setNaped("naped BMW");
+	}
+
+	void buildSzyberdach(){
+
+             samochod->setSzyberdach("szyberdach BMW");
+
+}
+};
+
+class NISSAN:public Builder {
+public :
+
+	NISSAN():Builder(){
+	}
+
+	void buildOPony(){
+        samochod->setOpony("opony NISSAN");
+    }
+
+    void buildSilnik(){
+        samochod->setSilnik("silnik NISSAN");
+    }
+
+    void buildRadio(){
+        samochod->setRadio("radio NISSAN");
+	}
+
+    void buildNaped(){
+        samochod->setNaped("naped NISSAN");
+	}
+
+	void buildSzyberdach(){
+
+             samochod->setSzyberdach("szyberdach NISSEN");
+
+}
+};
+
+class Director {
+private:
+	Builder* builder;
+
+public:
+    void setBuilder(Builder* b){
+        builder = b;
+    }
+
+    Samochod* getSamochod(){
+        return builder->getSamochod();
+    }
+
+    void skladaj(){
+        builder->newZestaw();
+        builder->buildOPony();
+        builder->buildSilnik();
+        builder->buildNaped();
+        builder->buildSzyberdach();
+        builder->buildRadio();
+
+    }
+};
+
+int main()
+{
+
+    Director* szef = new  Director();
+
+
+	Builder* builder = new  AUDI();
+    Builder* builder2 = new  BMW();
+    Builder* builder3 = new  NISSAN();
+
+
+    cout<<"\nZESTAW 1\n";
+	szef->setBuilder(builder);
+    szef->skladaj();
+    Samochod* zestaw1 = szef->getSamochod();
+    zestaw1->show();
+    cout << "\n\nZESTAW2\n" ;
+	szef->setBuilder(builder2);
+    szef->skladaj();
+    Samochod* zestaw2 = szef->getSamochod();
+zestaw2->show();
+ cout << "\n\nZESTAW3\n" ;
+	szef->setBuilder(builder3);
+    szef->skladaj();
+    Samochod* zestaw3 = szef->getSamochod();
+zestaw3->show();
+
+
+
+
+return 0;}
