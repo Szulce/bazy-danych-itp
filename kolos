@@ -1,0 +1,99 @@
+CREATE TABLE lubi (
+Student varchar(20),
+Kawiarnia varchar(20),
+Kawa varchar(10)
+);
+
+CREATE TABLE prasa(
+Kawiarnia varchar(20),
+Kawa varchar(10),
+Cena numeric,
+Gazeta varchar(20)
+);
+
+CREATE TABLE czyta(
+Student varchar(20),
+Gazeta varchar(20)
+);
+
+INSERT INTO lubi VALUES ('Maks','Sowa','Sojowe latte');
+INSERT INTO lubi VALUES ('Maks','Lenkiewicz','Capuccino');
+INSERT INTO lubi VALUES ('Bożydar','Italiana','Parzona');
+INSERT INTO lubi VALUES ('Bożydar','Sowa','Parzona');
+INSERT INTO lubi VALUES ('Badyl','Lenkiewicz','Rozpuszczalna');
+
+INSERT INTO prasa VALUES ('Sowa','Sojowe latte',15,'KryPol');
+INSERT INTO prasa VALUES ('Sowa','Capuccino',12,'KryPol');
+INSERT INTO prasa VALUES ('Sowa','Sojowe latte',15,'Wybiórcza');
+INSERT INTO prasa VALUES ('Sowa','Capuccino',15,'Polityka');
+INSERT INTO prasa VALUES ('Lenkiewicz','Rozpuszczalna',7,'GPC');
+INSERT INTO prasa VALUES ('Lenkiewicz','Cappucino',10,'Sieci');
+INSERT INTO prasa VALUES ('Italiana','Parzona',10,'GPC');
+INSERT INTO prasa VALUES ('Italiana','Parzona b',12,'Pani Domu');
+INSERT INTO prasa VALUES ('Italiana','Parzona b',12,'GPC');
+
+INSERT INTO czyta VALUES ('Maks','Krypol');
+INSERT INTO czyta VALUES ('Maks','Polityka');
+INSERT INTO czyta VALUES ('Bożydar','GPC');
+INSERT INTO czyta VALUES ('Bożydar','Sieci');
+INSERT INTO czyta VALUES ('Bożydar','Pani Domu');
+INSERT INTO czyta VALUES ('Badyl','Sieci');
+
+
+SELECT KAWA
+FROM LUBI
+GROUP BY KAWA
+HAVING COUNT(*)=(SELECT MIN(COUNT(*))
+                  FROM LUBI 
+                  GROUP BY KAWA);
+                  
+SELECT COUNT(DISTINCT KAWIARNIA)
+FROM PRASA
+WHERE GAZETA = ANY(SELECT GAZETA 
+                    FROM CZYTA
+                    WHERE STUDENT='KOWALSKI');
+
+SELECT GAZETA FROM PRASA 
+MINUS 
+SELECT GAZETA FROM CZYTA;
+
+//LUB
+
+SELECT GAZETA FROM PRASA 
+WHERE GAZETA NOT IN(SELECT GAZETA FROM CZYTA);
+
+
+SELECT KAWIARNIA
+FROM PRASA
+GROUP BY KAWIARNIA
+HAVING COUNT(DISTINCT KAWA)=(SELECT MAX(COUNT(DISTINCT KAWA))
+                              FROM PRASA
+                             GROUP BY KAWIARNIA);
+                             
+SELECT KAWIARNIA,KAWA
+FROM PRASA
+WHERE GAZETA ='Niezbędnik inteligenta';
+
+
+SELECT STUDENT
+FROM LUBI
+MINUS
+SELECT LUBI.STUDENT
+FROM lUBI JOIN PRASA
+ON LUBI.KAWIARNIA=PRASA.KAWIARNIA
+JOIN CZYTA
+ON CZYTA.GAZETA=PRASA.GAZETA
+WHERE LUBI.STUDENT<>CZYTA.STUDENT;
+
+SELECT DISTINCT LUBI.STUDENT,COUNT(PRASA.KAWA),AVG(CENA)
+FROM LUBI LEFT JOIN PRASA
+          ON (LUBI.KAWA=PRASA.KAWA AND LUBI.KAWIARNIA=PRASA.KAWIARNIA)
+GROUP BY STUDENT;
+
+SELECT PRASA.KAWIARNIA ,COUNT(NVL(CZYTA.GAZETA,0))
+FROM LUBI RIGHT JOIN PRASA
+          ON (LUBI.KAWA=PRASA.KAWA AND LUBI.KAWIARNIA=PRASA.KAWIARNIA)
+          LEFT JOIN CZYTA
+          ON (CZYTA.STUDENT=LUBI.STUDENT)
+          WHERE CZYTA.GAZETA=PRASA.GAZETA OR CZYTA.GAZETA IS NULL
+          GROUP BY PRASA.KAWIARNIA;
